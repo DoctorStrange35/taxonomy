@@ -1,0 +1,98 @@
+---
+title: Building a Table of Contents in Next.js
+description: Learn how to render markdown, highlight code, and generate an interactive table of contents for your blog posts.
+image: /images/blog/blog-post-1.jpg
+date: "2023-06-01"
+authors:
+  - shadcn
+---
+
+A great long-form reading experience is more than just words on a page. Readers
+want to **skim**, jump between sections, and copy code that actually works. In
+this post we walk through the three building blocks that make a blog post
+delightful: markdown rendering, syntax highlighting, and a table of contents.
+
+## Markdown rendering
+
+Markdown lets you focus on writing while the framework handles the presentation.
+This blog is powered by [Contentlayer](https://contentlayer.dev) and MDX, which
+means every `.mdx` file in `content/blog` becomes a fully typed document.
+
+You get all of the elements you would expect:
+
+- **Bold** and _italic_ text.
+- Ordered and unordered lists.
+- Blockquotes for emphasis.
+- Tables, images, and inline `code`.
+
+> Good typography is invisible. When it works, readers never notice it — they
+> just keep reading.
+
+### GitHub flavored markdown
+
+Thanks to `remark-gfm`, links like https://nextjs.org are detected
+automatically, and tables render cleanly:
+
+| Feature      | Plugin                     |
+| ------------ | -------------------------- |
+| Slugs        | `rehype-slug`              |
+| Highlighting | `rehype-pretty-code`       |
+| Anchor links | `rehype-autolink-headings` |
+
+## Syntax highlighting
+
+Code blocks are highlighted at build time with
+[rehype-pretty-code](https://rehype-pretty-code.netlify.app), so there is no
+client-side JavaScript cost. Here is a small React component:
+
+```tsx
+export function Greeting({ name }: { name: string }) {
+  const message = `Hello, ${name}!`
+
+  return <h1 className="text-2xl font-bold">{message}</h1>
+}
+```
+
+You can highlight code in any language. A quick example in Python:
+
+```py
+def fibonacci(n: int) -> list[int]:
+    seq = [0, 1]
+    while len(seq) < n:
+        seq.append(seq[-1] + seq[-2])
+    return seq[:n]
+
+
+print(fibonacci(10))
+```
+
+And a shell snippet for installing dependencies:
+
+```bash
+pnpm install
+pnpm dev
+```
+
+## Table of contents
+
+The table of contents on the right is generated from the headings in this
+document. Each `h2` and `h3` becomes an entry, and the active section is
+highlighted as you scroll.
+
+### How it works
+
+We parse the raw markdown with `remark`, build a tree of headings using
+`mdast-util-toc`, and render it with an `IntersectionObserver` to track the
+heading that is currently in view.
+
+### Why it matters
+
+A table of contents turns a long article into something navigable. Readers can
+jump straight to the part they care about, which is especially valuable for
+tutorials and reference material.
+
+## Wrapping up
+
+With markdown rendering, syntax highlighting, and a table of contents in place,
+your blog posts are easy to write, pleasant to read, and simple to navigate.
+Happy writing!
